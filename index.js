@@ -6,7 +6,7 @@ const server = express();
 // MiddleWare
 server.use(express.json());
 
-// Create
+// Create - Adds a new user to the db - Endpoint 'api/users'
 server.post("/api/users", (req, res) => {
   const newUser = req.body;
   db.insert(newUser)
@@ -18,14 +18,14 @@ server.post("/api/users", (req, res) => {
     });
 });
 
-// Read
+// Read - Gets the full list of users on the db - Endpoint 'api/users'
 server.get("/api/users", (req, res) => {
   db.find()
     .then(allUsers => {
       res.send(allUsers);
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(500).send({ error: "The users information could not be retrieved"});
     });
 });
 
