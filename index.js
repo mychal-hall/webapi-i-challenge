@@ -29,6 +29,23 @@ server.get("/api/users", (req, res) => {
     });
 });
 
+// Update
+server.put("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  db.update(id, changes)
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json(updatedUser);
+      } else {
+        res.status(404).json({ err: "Incorrect ID" });
+      }
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
+});
+
 // Listening
 server.listen(9000, () => {
   console.log("Listening on port 9000");
