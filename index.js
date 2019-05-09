@@ -61,19 +61,27 @@ server.get("/api/users/:id", (req, res) => {
 // Update - udpdate user based on ID - Endpoint '/api/users/:id'
 server.put("/api/users/:id", (req, res) => {
   const { id } = req.params;
-  const changes = req.body;
-  db.update(id, changes)
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json(updatedUser);
+  const { name, bio } = req.body;
+  if (!name || !bio) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide a name and bio for the user" });
+  }
+  const updatedUser = { name, bio };
+  db.update(id, updatedUser)
+    .then(response => {
+      if (response) {
+        res.json(response);
       } else {
         res
           .status(404)
-          .json({ error: "The user with the specified ID does not exist!!!" });
+          .json({ message: "The user with specified ID does not exist" });
       }
     })
     .catch(err => {
-      res.status(500).send(err);
+      res
+        .status(500)
+        .json({ error: "The user information could not be modified!!!" });
     });
 });
 
