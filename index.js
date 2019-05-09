@@ -25,7 +25,31 @@ server.get("/api/users", (req, res) => {
       res.send(allUsers);
     })
     .catch(err => {
-      res.status(500).send({ error: "The users information could not be retrieved"});
+      res
+        .status(500)
+        .send({ error: "The users information could not be retrieved" });
+    });
+});
+
+// Read - Gets a specific user - Endpoint 'api/users/:id'
+server.get("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  db.findById(id)
+    .then(userById => {
+      if (userById) {
+        res.json(userById);
+      } else {
+        res
+          .status(404)
+          .json({
+            message: "The user with the specified ID does not exist!!!"
+          });
+      }
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .json({ error: "The user information could not be retrieved!!!" });
     });
 });
 
