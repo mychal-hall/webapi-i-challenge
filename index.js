@@ -46,6 +46,14 @@ server.put("/api/users/:id", (req, res) => {
     });
 });
 
+// Delete
+server.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  db.remove(id).then(removedUser => {
+    res.json(removedUser);
+  });
+});
+
 // Listening
 server.listen(9000, () => {
   console.log("Listening on port 9000");
