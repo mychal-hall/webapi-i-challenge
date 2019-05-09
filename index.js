@@ -8,13 +8,20 @@ server.use(express.json());
 
 // Create - Adds a new user to the db - Endpoint 'api/users'
 server.post("/api/users", (req, res) => {
-  const newUser = req.body;
-  db.insert(newUser)
-    .then(addedUser => {
-      res.status(201).json(addedUser);
+  const { name, bio } = req.body;
+  if (!name || !bio) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide a name and bio for the user" });
+  }
+  db.insert({ name, bio })
+    .then(response => {
+      res.status(201).json(response);
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(500).json({
+        error: "There was an error while saving the user to the database!!!"
+      });
     });
 });
 
@@ -51,7 +58,7 @@ server.get("/api/users/:id", (req, res) => {
     });
 });
 
-// Update
+// Update - udpdate user based on ID - Endpoint '/api/users/:id'
 server.put("/api/users/:id", (req, res) => {
   const { id } = req.params;
   const changes = req.body;
@@ -60,7 +67,9 @@ server.put("/api/users/:id", (req, res) => {
       if (updatedUser) {
         res.json(updatedUser);
       } else {
-        res.status(404).json({ err: "Incorrect ID" });
+        res
+          .status(404)
+          .json({ error: "The user with the specified ID does not exist!!!" });
       }
     })
     .catch(err => {
@@ -76,11 +85,9 @@ server.delete("/api/users/:id", (req, res) => {
       if (removedUser) {
         res.json(removedUser);
       } else {
-        res
-          .status(404)
-          .json({
-            message: "The user with the specified ID does not exist!!!"
-          });
+        res.status(404).json({
+          message: "The user with the specified ID does not exist!!!"
+        });
       }
     })
     .catch(err => {
